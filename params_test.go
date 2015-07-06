@@ -22,6 +22,20 @@ func TestSimple(t *testing.T) {
 func TestEmpty(t *testing.T) {
 	x := map[string]string{"city": "Olsztyn"}
 	p := NewParams(x)
-	m := p.Get("random")
-	m.CanBool()
+	if m := p.Get("random"); m != nil {
+		t.Error("nil expected")
+	} else if m.CanBool() {
+		t.Error("empty should not be convertable")
+	}
+}
+
+func TestFromMapOfSlice(t *testing.T) {
+	x := map[string][]string{"city": []string{"Olsztyn"}}
+	p := NewParamsSlices(x)
+
+	if m := p.Get("city"); m == nil {
+		t.Error("expected not nil")
+	} else if m.String() != "Olsztyn" {
+		t.Errorf("want: Olszty, got: %s", m.String())
+	}
 }

@@ -39,3 +39,18 @@ func TestFromMapOfSlice(t *testing.T) {
 		t.Errorf("want: Olszty, got: %s", m.String())
 	}
 }
+
+func TestParseOrDef(t *testing.T) {
+	x := map[string]string{"city": "Olsztyn", "year": "2015", "badF": "x"}
+	p := NewParams(x)
+
+	if x := p.Get("year").IntOr(1234); x != 2015 {
+		t.Errorf("want: 2015, got: %d", x)
+	}
+	if x := p.Get("badF").Float32Or(3.14); x != 3.14 {
+		t.Errorf("want: 3.14, got: %f", x)
+	}
+	if x := p.Get("empty").Float32Or(3.14); x != 3.14 {
+		t.Errorf("want: 3.14, got: %f", x)
+	}
+}

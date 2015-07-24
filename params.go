@@ -73,6 +73,13 @@ func (p *Param) Int32() int32 {
 	return int32(p.i)
 }
 
+func (p *Param) Int32Or(v int32) int32 {
+	if p.CanInt32(){
+		return int32(p.i)
+	}
+	return v
+}
+
 func (p *Param) CanInt64() bool {
 	if p == nil {
 		return false
@@ -86,6 +93,13 @@ func (p *Param) Int64() int64 {
 	return p.i
 }
 
+func (p *Param) Int64Or(v int64) int64 {
+	if p.CanInt64() {
+		return p.i
+	}
+	return v
+}
+
 func (p *Param) CanInt() bool {
 	if p == nil {
 		return false
@@ -97,6 +111,13 @@ func (p *Param) CanInt() bool {
 func (p *Param) Int() int {
 	p.toInt(64)
 	return int(p.i)
+}
+
+func (p *Param) IntOr(v int) int {
+	if p.CanInt() {
+		return int(p.i)
+	}
+	return v
 }
 
 func (p *Param) toFloat(bitSize int) {
@@ -116,6 +137,13 @@ func (p *Param) Float32() float32 {
 	return float32(p.f)
 }
 
+func (p *Param) Float32Or(v float32) float32 {
+	if p.CanFloat32() {
+		return float32(p.f)
+	}
+	return v
+}
+
 func (p *Param) CanFloat64() bool {
 	if p == nil {
 		return false
@@ -127,6 +155,13 @@ func (p *Param) CanFloat64() bool {
 func (p *Param) Float64() float64 {
 	p.toFloat(64)
 	return p.f
+}
+
+func (p *Param) Float64Or(v float64) float64 {
+	if p.CanFloat64() {
+		return p.f
+	}
+	return v
 }
 
 func (p *Param) toBool() {
@@ -144,4 +179,11 @@ func (p *Param) CanBool() bool {
 func (p *Param) Bool() bool {
 	p.toBool()
 	return p.b
+}
+
+func (p *Param) BoolOr(v bool) bool {
+	if p.CanBool() {
+		return p.b
+	}
+	return v
 }

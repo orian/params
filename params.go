@@ -49,11 +49,22 @@ type Param struct {
 	e  error
 }
 
+func (p *Param) CanString() bool {
+	return p != nil
+}
+
 func (p *Param) String() string {
 	if p.ss == nil {
 		return p.s
 	}
 	return p.ss[0] // TODO what if it's empty?!
+}
+
+func (p *Param) StringOr(v string) string {
+	if p.CanString() {
+		return p.String()
+	}
+	return v
 }
 
 func (p *Param) toInt(bitSize int) {

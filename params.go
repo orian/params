@@ -9,7 +9,7 @@ type Params map[string]*Param
 func NewParams(m map[string]string) Params {
 	p := make(Params)
 	for k, v := range m {
-		p[k] = &Param{s: v}
+		p[k] = NewParam(v)
 	}
 	return p
 }
@@ -19,10 +19,8 @@ func NewParamsSlices(m map[string][]string) Params {
 	for k, v := range m {
 		if l := len(v); l == 0 {
 			continue
-		} else if l == 1 {
-			p[k] = &Param{s: v[0]}
 		} else {
-			p[k] = &Param{ss: append(make([]string, 0, l), v...)}
+			p[k] = NewParam(v...)
 		}
 	}
 	return p
@@ -47,6 +45,17 @@ type Param struct {
 	b  bool
 	bs []bool
 	e  error
+}
+
+func NewParam(s ...string) *Param {
+	switch len(s){
+	case 0:
+		panic("a param must have at least one value")
+	case 1:
+		return &Param{s: s[0]}
+	default:
+		return &Param{ss: s}
+	}
 }
 
 func (p *Param) CanString() bool {
@@ -85,7 +94,7 @@ func (p *Param) Int32() int32 {
 }
 
 func (p *Param) Int32Or(v int32) int32 {
-	if p.CanInt32(){
+	if p.CanInt32() {
 		return int32(p.i)
 	}
 	return v

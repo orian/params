@@ -1,6 +1,8 @@
 package params
 
 import (
+	"github.com/julienschmidt/httprouter"
+
 	"testing"
 )
 
@@ -50,5 +52,27 @@ func TestParseOrDef(t *testing.T) {
 	}
 	if x := p.Get("empty").Float32Or(3.14); x != 3.14 {
 		t.Errorf("want: 3.14, got: %f", x)
+	}
+}
+
+func TestStringFromHttprouter(t *testing.T) {
+	p := make(httprouter.Params, 0)
+	p = append(p, httprouter.Param{"name", "value"})
+
+	m := NewFromHttpRouter(p)
+	s := m.Get("name").String()
+	if s != "value" {
+		t.Errorf("want: `value`, got: %q", s)
+	}
+}
+
+func TestInt64FromHttprouter(t *testing.T) {
+	p := make(httprouter.Params, 0)
+	p = append(p, httprouter.Param{"name", "3"})
+
+	m := NewFromHttpRouter(p)
+	s := m.Get("name").Int64Or(1)
+	if s != 3 {
+		t.Errorf("want: 3, got: %d", s)
 	}
 }

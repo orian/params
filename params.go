@@ -9,7 +9,6 @@ import (
 type Params interface {
 	Has(name string) bool
 	Get(name string) Param
-	Add(name string, values ...string)
 }
 
 type HttpParams []httprouter.Param
@@ -37,10 +36,6 @@ func (p HttpParams) Get(name string) Param {
 	return param
 }
 
-func (p HttpParams) Add(name string, values ...string) {
-	panic("cannot modify HttpParams")
-}
-
 type paramsImpl map[string]*paramImpl
 
 func NewParams(m map[string]string) Params {
@@ -54,7 +49,11 @@ func NewParams(m map[string]string) Params {
 func NewParamsSlices(m map[string][]string) Params {
 	p := make(paramsImpl)
 	for k, v := range m {
-		p.Add(k, v...)
+		if l := len(v); l == 0 {
+			continue
+		} else {
+			p[k] = NewParam(v...).(*paramImpl)
+		}
 	}
 	return p
 }
@@ -66,14 +65,6 @@ func (p paramsImpl) Has(name string) bool {
 
 func (p paramsImpl) Get(name string) Param {
 	return p[name]
-}
-
-func (p paramsImpl) Add(name string, values ...string) {
-	if l := len(values); l == 1 {
-		p[name] = &paramImpl{s: values[0]}
-	} else if l > 1 {
-		p[name] = &paramImpl{ss: append(make([]string, 0, l), values...)}
-	}
 }
 
 type Param interface {
@@ -101,6 +92,17 @@ type Param interface {
 	CanBool() bool
 	Bool() bool
 	BoolOr(v bool) bool
+}
+
+func NewParam(s ...string) Param {
+	switch len(s) {
+	case 0:
+		panic("a param must have at least one value")
+	case 1:
+		return &paramImpl{s: s[0]}
+	default:
+		return &paramImpl{ss: s}
+	}
 }
 
 type paramImpl struct {

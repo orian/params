@@ -22,9 +22,7 @@ func TestSimple(t *testing.T) {
 func TestEmpty(t *testing.T) {
 	x := map[string]string{"city": "Olsztyn"}
 	p := NewParams(x)
-	if m := p.Get("random"); m != nil {
-		t.Error("nil expected")
-	} else if m.CanBool() {
+	if m := p.Get("random"); m.CanBool() {
 		t.Error("empty should not be convertable")
 	}
 }
